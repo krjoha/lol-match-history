@@ -1,0 +1,20 @@
+# local package
+-e .
+
+# external requirements (please freeze version to the one you are using)
+bandit==1.7.4
+black==22.10.0
+doit==0.36.0
+dvc==2.34.1
+flake8==5.0.4
+loguru==0.6.0
+mlflow==1.30.0
+pylint==2.15.5
+pytest==7.2.0
+pytest-cov==4.0.0
+python-dotenv==0.21.0
+tokenize-rt==5.0.0
+
+# Add new requirements below
+riotwatcher==3.2.4
+limits==2.7.1

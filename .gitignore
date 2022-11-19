@@ -111,3 +111,5 @@ config.env
 
 # doit
 *.doit.db*
+
+/data

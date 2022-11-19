@@ -1,5 +1,4 @@
-from riot import logger
-import argparse
+from lol_match_history import logger
 import json
 import os
 import time
@@ -9,12 +8,10 @@ from limits import storage, strategies, parse
 
 
 class RiotClient:
-    def __init__(self) -> None:
-        self.apikey = os.environ.get("riot_apikey", "no_key_defined")
-        self.region = os.environ.get("region", "euw1")
-        self.data_path = os.environ.get("data_path")
-
-        self.watcher = LolWatcher(api_key=self.apikey)
+    def __init__(self, apikey: str, region: str, data_path: str) -> None:
+        self.region = region
+        self.data_path = data_path
+        self.watcher = LolWatcher(api_key=apikey)
 
         self.memory_storage = storage.MemoryStorage()
         self.moving_window = strategies.MovingWindowRateLimiter(self.memory_storage)
@@ -47,7 +44,7 @@ class RiotClient:
         for i, game_id in enumerate(game_ids):
             if i % 10 == 0:
                 logger.info(
-                    f"Getting match {i + 1} of {len(game_ids)} for player {summoner_name}"
+                    f"Getting match {i+1} of {len(game_ids)} for player {summoner_name}"
                 )
 
             match = self._get_match_by_id(game_id, summoner_name)
@@ -81,30 +78,8 @@ class RiotClient:
 
             if sleep_counter % 10 == 0:
                 logger.info(
-                    f"rate limit hit - sleeping {self.moving_window.get_window_stats(self.rate_limit_item)}"
+                    f"rate limit hit - sleeping for {self.moving_window.get_window_stats(self.rate_limit_item)[1]-(sleep_counter*0.5)}"
                 )
             time.sleep(0.5)
 
         self.moving_window.hit(self.rate_limit_item, "riot")
-
-
-if __name__ == "__main__":
-    args_parser = argparse.ArgumentParser()
-    args_parser.add_argument(
-        "--summoner_names",
-        nargs="*",
-        type=str,
-        default=[],
-    )
-    args = args_parser.parse_args()
-
-    client = RiotClient()
-
-    for summoner_name in args.summoner_names:
-        profile = client.get_profile(summoner_name)
-        matches = client.get_matches(profile["puuid"], profile["name"])
-        logger.info(
-            f"Found {len(matches['matches'])} matches for player '{summoner_name}'"
-        )
-
-    logger.info(f"Finished work for {len(args.summoner_names)} summoners")

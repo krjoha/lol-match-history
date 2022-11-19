@@ -18,3 +18,4 @@ tokenize-rt==5.0.0
 # Add new requirements below
 riotwatcher==3.2.4
 limits==2.7.1
+jupyterlab==3.5.0

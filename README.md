@@ -3,12 +3,28 @@ LoL match history analysis
 
 A project to analyze league of legends match data.
 
+Requirements to run
+------------
+- [Riot developer API key](https://developer.riotgames.com/)
+- Python installation or docker
+
 Development
 ------------
 
-Copy .env.default to .env and replace values with your own.
+Copy the file .env.default to .env and replace setting values with your own (API-key, region, data save-path etc.). Download data from riot-api using doit as described below. You can then start a notebook server with ```jupyter lab``` and explore the data.
 
-To build a docker image, start a container (as your current user/group), mount current directory and connect to the container::
+Use ```doit``` to run tasks like make_dataset, linting and tests:
+
+``` bash
+doit help make_dataset
+doit make_dataset -s "summoner 1" -s summoner2
+doit lint
+doit pytest
+```
+
+Using docker
+------------
+To build a docker image, start a container (as your current user/group), mount current directory and connect to the container:
 
 ``` bash
 docker build -t riot -f Dockerfile .
@@ -16,19 +32,14 @@ docker run -d --rm -it --user $(id -u):$(id -g) --volume $(pwd):/workspace --nam
 docker exec -it riot /bin/bash
 ```
 
+Using python
+------------
 If you want to use python environments instead, use the commands below. That creates a virtual python environment in your current folder, activates it and installs dependencies with pip
 
 ``` bash
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-```
-
-Use ```doit``` to run linting and tests:
-
-``` bash
-doit lint
-doit pytest
 ```
 
 Project Organization
@@ -60,7 +71,7 @@ Project Organization
     │                         generated with `pip freeze > requirements.txt`
     │
     ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── riot               <- Source code for use in this project.
+    ├── lol_match_history  <- Source code for use in this project.
     │   ├── __init__.py    <- Makes riot a Python module
     │   │
     │   ├── data           <- Scripts to download or generate data
